@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyflow.mapper.TaskMapper">
+
+    <resultMap id="TaskResultMap" type="com.studyflow.entity.Task">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="priority" column="priority"/>
+        <result property="status" column="status"/>
+        <result property="deadline" column="deadline"/>
+        <result property="reminderPolicy" column="reminder_policy"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.studyflow.entity.Task" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO task (title, description, priority, status, deadline, reminder_policy)
+        VALUES (#{title}, #{description}, #{priority}, #{status}, #{deadline}, #{reminderPolicy})
+    </insert>
+
+    <update id="updateById" parameterType="com.studyflow.entity.Task">
+        UPDATE task
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="deadline != null">deadline = #{deadline},</if>
+            <if test="reminderPolicy != null">reminder_policy = #{reminderPolicy},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM task WHERE id = #{id}
+    </delete>
+
+    <select id="selectById" resultMap="TaskResultMap">
+        SELECT * FROM task WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="TaskResultMap">
+        SELECT * FROM task ORDER BY
+        FIELD(priority, 'HIGH', 'MEDIUM', 'LOW'),
+        deadline ASC
+    </select>
+
+    <select id="selectByStatus" resultMap="TaskResultMap">
+        SELECT * FROM task
+        WHERE status = #{status}
+        ORDER BY FIELD(priority, 'HIGH', 'MEDIUM', 'LOW'), deadline ASC
+    </select>
+
+    <select id="selectByPriority" resultMap="TaskResultMap">
+        SELECT * FROM task
+        WHERE priority = #{priority}
+        ORDER BY deadline ASC
+    </select>
+
+    <select id="selectByStatusAndPriority" resultMap="TaskResultMap">
+        SELECT * FROM task
+        WHERE status = #{status} AND priority = #{priority}
+        ORDER BY deadline ASC
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM task
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM task WHERE status = #{status}
+    </select>
+</mapper>
