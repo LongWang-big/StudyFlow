@@ -6,6 +6,7 @@ import com.studyflow.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -16,7 +17,20 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(Task task) {
-        throw new UnsupportedOperationException("TODO");
+        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("任务标题不能为空");
+        }
+        if ("HIGH".equals(task.getPriority()) && task.getDeadline() == null) {
+            throw new IllegalArgumentException("高优先级任务必须设置截止时间");
+        }
+        if (task.getDeadline() != null && task.getDeadline().before(new Date())) {
+            throw new IllegalArgumentException("截止时间不能早于当前时间");
+        }
+        if (task.getStatus() == null) {
+            task.setStatus("TODO");
+        }
+        taskMapper.insert(task);
+        return task;
     }
 
     @Override
