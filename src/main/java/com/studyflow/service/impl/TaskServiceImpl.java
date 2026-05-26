@@ -6,8 +6,6 @@ import com.studyflow.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -18,96 +16,61 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(Task task) {
-        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("任务标题不能为空");
-        }
-        if ("HIGH".equals(task.getPriority()) && task.getDeadline() == null) {
-            throw new IllegalArgumentException("高优先级任务必须设置截止时间");
-        }
-        if (task.getDeadline() != null && task.getDeadline().before(new Date())) {
-            throw new IllegalArgumentException("截止时间不能早于当前时间");
-        }
-        if (task.getStatus() == null) {
-            task.setStatus("TODO");
-        }
-        taskMapper.insert(task);
-        return task;
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public Task updateTask(Long id, Task task) {
-        Task existing = taskMapper.selectById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("任务不存在");
-        }
-        if ("COMPLETED".equals(existing.getStatus())) {
-            throw new IllegalArgumentException("已完成任务不允许修改");
-        }
-        task.setId(id);
-        taskMapper.updateById(task);
-        return taskMapper.selectById(id);
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public void deleteTask(Long id) {
-        Task existing = taskMapper.selectById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("任务不存在");
-        }
-        taskMapper.deleteById(id);
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public Task getTaskById(Long id) {
-        return taskMapper.selectById(id);
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public List<Task> getAllTasks() {
-        return taskMapper.selectAll();
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public List<Task> getTasksByStatus(String status) {
-        return taskMapper.selectByStatus(status);
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public List<Task> getTasksByPriority(String priority) {
-        return taskMapper.selectByPriority(priority);
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public void updateTaskStatus(Long id, String status) {
-        Task existing = taskMapper.selectById(id);
-        if ("COMPLETED".equals(existing.getStatus()) && "TODO".equals(status)) {
-            throw new IllegalArgumentException("已完成任务不能回退到未开始状态");
-        }
-        existing.setStatus(status);
-        taskMapper.updateById(existing);
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public int getTotalCount() {
-        return taskMapper.countAll();
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public int getCompletedCount() {
-        return taskMapper.countByStatus("COMPLETED");
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public int getUnfinishedCount() {
-        return getTotalCount() - getCompletedCount();
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override
     public double getCompletionRate() {
-        int total = getTotalCount();
-        if (total == 0) {
-            return 0.0;
-        }
-        return (double) getCompletedCount() / total * 100;
+        throw new UnsupportedOperationException("TODO");
     }
 }
