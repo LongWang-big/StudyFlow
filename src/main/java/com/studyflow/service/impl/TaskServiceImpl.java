@@ -56,12 +56,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public int getTotalCount() {
-        throw new UnsupportedOperationException("TODO");
+        return taskMapper.countAll();
     }
 
     @Override
     public int getCompletedCount() {
-        throw new UnsupportedOperationException("TODO");
+        return taskMapper.countByStatus("COMPLETED");
     }
 
     @Override
