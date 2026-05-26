@@ -66,11 +66,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public int getUnfinishedCount() {
-        throw new UnsupportedOperationException("TODO");
+        return getTotalCount() - getCompletedCount();
     }
 
     @Override
     public double getCompletionRate() {
-        throw new UnsupportedOperationException("TODO");
+        int total = getTotalCount();
+        if (total == 0) {
+            return 0.0;
+        }
+        return getCompletedCount() / total * 100;
     }
 }
