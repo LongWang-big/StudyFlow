@@ -31,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task getTaskById(Long id) {
-        throw new UnsupportedOperationException("TODO");
+        return taskMapper.selectById(id);
     }
 
     @Override
