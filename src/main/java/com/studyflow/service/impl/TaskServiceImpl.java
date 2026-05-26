@@ -79,11 +79,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateTaskStatus(Long id, String status) {
         Task existing = taskMapper.selectById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("任务不存在");
-        }
-        if ("COMPLETED".equals(existing.getStatus())) {
-            throw new IllegalArgumentException("已完成任务不能修改状态");
+        if ("COMPLETED".equals(existing.getStatus()) && "TODO".equals(status)) {
+            throw new IllegalArgumentException("已完成任务不能回退到未开始状态");
         }
         existing.setStatus(status);
         taskMapper.updateById(existing);
