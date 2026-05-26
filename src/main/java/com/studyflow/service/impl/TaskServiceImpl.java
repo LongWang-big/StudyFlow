@@ -26,7 +26,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTask(Long id) {
-        throw new UnsupportedOperationException("TODO");
+        Task existing = taskMapper.selectById(id);
+        if (existing == null) {
+            throw new IllegalArgumentException("任务不存在");
+        }
+        taskMapper.deleteById(id);
     }
 
     @Override
