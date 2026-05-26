@@ -21,7 +21,16 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(Long id, Task task) {
-        throw new UnsupportedOperationException("TODO");
+        Task existing = taskMapper.selectById(id);
+        if (existing == null) {
+            throw new IllegalArgumentException("任务不存在");
+        }
+        if ("COMPLETED".equals(existing.getStatus())) {
+            throw new IllegalArgumentException("已完成任务不允许修改");
+        }
+        task.setId(id);
+        taskMapper.updateById(task);
+        return taskMapper.selectById(id);
     }
 
     @Override
