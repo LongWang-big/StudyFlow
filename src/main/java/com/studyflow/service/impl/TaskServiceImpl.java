@@ -75,6 +75,6 @@ public class TaskServiceImpl implements TaskService {
         if (total == 0) {
             return 0.0;
         }
-        return getCompletedCount() / total * 100;
+        return (double) getCompletedCount() / total * 100;
     }
 }
