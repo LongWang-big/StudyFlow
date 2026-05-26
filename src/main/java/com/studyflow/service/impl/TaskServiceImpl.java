@@ -6,6 +6,7 @@ import com.studyflow.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -79,16 +80,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateTaskStatus(Long id, String status) {
         Task existing = taskMapper.selectById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("任务不存在");
-        }
         if ("COMPLETED".equals(existing.getStatus()) && "TODO".equals(status)) {
             throw new IllegalArgumentException("已完成任务不能回退到未开始状态");
         }
-        Task update = new Task();
-        update.setId(id);
-        update.setStatus(status);
-        taskMapper.updateById(update);
+        existing.setStatus(status);
+        taskMapper.updateById(existing);
     }
 
     @Override
