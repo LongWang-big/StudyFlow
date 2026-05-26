@@ -36,17 +36,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getAllTasks() {
-        throw new UnsupportedOperationException("TODO");
+        return taskMapper.selectAll();
     }
 
     @Override
     public List<Task> getTasksByStatus(String status) {
-        throw new UnsupportedOperationException("TODO");
+        return taskMapper.selectByStatus(status);
     }
 
     @Override
     public List<Task> getTasksByPriority(String priority) {
-        throw new UnsupportedOperationException("TODO");
+        return taskMapper.selectByPriority(priority);
     }
 
     @Override
