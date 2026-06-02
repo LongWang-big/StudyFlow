@@ -18,39 +18,19 @@ public class TaskController {
     private TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<?> createTask(@RequestBody Task task) {
-        try {
-            Task created = taskService.createTask(task);
-            return ResponseEntity.ok(created);
-        } catch (IllegalArgumentException e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
+    public Task createTask(@RequestBody Task task) {
+        return taskService.createTask(task);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody Task task) {
-        try {
-            Task updated = taskService.updateTask(id, task);
-            return ResponseEntity.ok(updated);
-        } catch (IllegalArgumentException e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
+    public Task updateTask(@PathVariable Long id, @RequestBody Task task) {
+        return taskService.updateTask(id, task);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable Long id) {
-        try {
-            taskService.deleteTask(id);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
+        taskService.deleteTask(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
@@ -85,15 +65,9 @@ public class TaskController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        try {
-            String status = body.get("status");
-            taskService.updateTaskStatus(id, status);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
+        String status = body.get("status");
+        taskService.updateTaskStatus(id, status);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/stats")
