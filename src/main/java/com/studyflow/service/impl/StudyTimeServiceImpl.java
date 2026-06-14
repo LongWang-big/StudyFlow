@@ -22,6 +22,10 @@ public class StudyTimeServiceImpl implements StudyTimeService {
 
     @Override
     public StudyTimeRecord startPractice(Long taskId) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("taskId 不能为空");
+        }
+
         // 校验任务是否存在
         Task task = taskMapper.selectById(taskId);
         if (task == null) {
@@ -46,6 +50,10 @@ public class StudyTimeServiceImpl implements StudyTimeService {
 
     @Override
     public StudyTimeRecord finishPractice(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("记录 id 不能为空");
+        }
+
         // 查询记录是否存在
         StudyTimeRecord record = studyTimeMapper.selectById(id);
         if (record == null) {
@@ -57,10 +65,13 @@ public class StudyTimeServiceImpl implements StudyTimeService {
             throw new IllegalArgumentException("该次练习已结束");
         }
 
-        // 计算时长并更新
+        // 计算时长并更新（WHERE end_time IS NULL 防并发）
         Date endTime = new Date();
         double duration = calculateDuration(record.getStartTime(), endTime);
-        studyTimeMapper.updateEndTime(id, endTime, duration);
+        int updated = studyTimeMapper.updateEndTime(id, endTime, duration);
+        if (updated == 0) {
+            throw new IllegalArgumentException("该次练习已结束");
+        }
 
         // 返回更新后的记录
         return studyTimeMapper.selectById(id);
@@ -73,6 +84,9 @@ public class StudyTimeServiceImpl implements StudyTimeService {
         }
         long startMs = startTime.getTime();
         long endMs = endTime.getTime();
+        if (endMs < startMs) {
+            throw new IllegalArgumentException("结束时间不能早于开始时间");
+        }
         double minutes = (endMs - startMs) / 60000.0;
         // 四舍五入到小数点后 1 位
         return Math.round(minutes * 10.0) / 10.0;
@@ -80,17 +94,26 @@ public class StudyTimeServiceImpl implements StudyTimeService {
 
     @Override
     public List<StudyTimeRecord> getRecordsByTaskId(Long taskId) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("taskId 不能为空");
+        }
         return studyTimeMapper.selectByTaskId(taskId);
     }
 
     @Override
     public double getTotalDuration(Long taskId) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("taskId 不能为空");
+        }
         Double total = studyTimeMapper.sumDurationByTaskId(taskId);
         return total != null ? total : 0.0;
     }
 
     @Override
     public List<Map<String, Object>> getDailySummary(Long taskId, int days) {
+        if (taskId == null) {
+            throw new IllegalArgumentException("taskId 不能为空");
+        }
         if (days <= 0) {
             throw new IllegalArgumentException("天数必须大于 0");
         }

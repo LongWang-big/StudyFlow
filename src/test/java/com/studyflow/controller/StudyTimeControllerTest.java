@@ -73,6 +73,16 @@ class StudyTimeControllerTest {
                 .andExpect(jsonPath("$.message").value("已有进行中的练习，请先结束"));
     }
 
+    /**
+     * C1-4 异常路径：未传 taskId 参数
+     * 预期：返回 400（Spring 参数校验失败）
+     */
+    @Test
+    void startPractice_missingTaskId_shouldReturn400() throws Exception {
+        mockMvc.perform(post("/api/study-time/start"))
+                .andExpect(status().isBadRequest());
+    }
+
     // ==================== PATCH /api/study-time/{id}/finish ====================
 
     /**

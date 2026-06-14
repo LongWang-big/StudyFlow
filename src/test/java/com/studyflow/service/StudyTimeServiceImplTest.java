@@ -89,6 +89,19 @@ class StudyTimeServiceImplTest {
         verify(studyTimeMapper, never()).insert(any(StudyTimeRecord.class));
     }
 
+    /**
+     * T1-4 异常路径：taskId 为 null
+     * 预期：抛出 IllegalArgumentException("taskId 不能为空")
+     */
+    @Test
+    void startPractice_nullTaskId_shouldThrowIllegalArgument() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.startPractice(null)
+        );
+        assertEquals("taskId 不能为空", ex.getMessage());
+    }
+
     // ==================== finishPractice ====================
 
     /**
@@ -155,6 +168,39 @@ class StudyTimeServiceImplTest {
         assertEquals("该次练习已结束", ex.getMessage());
     }
 
+    /**
+     * T2-4 异常路径：id 为 null
+     * 预期：抛出 IllegalArgumentException("记录 id 不能为空")
+     */
+    @Test
+    void finishPractice_nullId_shouldThrowIllegalArgument() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.finishPractice(null)
+        );
+        assertEquals("记录 id 不能为空", ex.getMessage());
+    }
+
+    /**
+     * T2-5 竞态条件：updateEndTime 返回 0（已被并发完成）
+     * 预期：抛出 IllegalArgumentException("该次练习已结束")
+     */
+    @Test
+    void finishPractice_concurrentFinish_shouldThrowIllegalArgument() {
+        StudyTimeRecord record = new StudyTimeRecord();
+        record.setId(1L);
+        record.setStartTime(pastMinutes(30));
+        record.setEndTime(null);
+        when(studyTimeMapper.selectById(1L)).thenReturn(record);
+        when(studyTimeMapper.updateEndTime(eq(1L), any(Date.class), any(Double.class))).thenReturn(0);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.finishPractice(1L)
+        );
+        assertEquals("该次练习已结束", ex.getMessage());
+    }
+
     // ==================== calculateDuration ====================
 
     /**
@@ -210,6 +256,22 @@ class StudyTimeServiceImplTest {
         assertEquals("开始时间和结束时间不能为空", ex.getMessage());
     }
 
+    /**
+     * T3-5 边界条件：endTime 早于 startTime
+     * 预期：抛出 IllegalArgumentException("结束时间不能早于开始时间")
+     */
+    @Test
+    void calculateDuration_endBeforeStart_shouldThrowIllegalArgument() {
+        Date start = new Date();
+        Date end = pastMinutes(30);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.calculateDuration(start, end)
+        );
+        assertEquals("结束时间不能早于开始时间", ex.getMessage());
+    }
+
     // ==================== getRecordsByTaskId ====================
 
     /**
@@ -245,6 +307,19 @@ class StudyTimeServiceImplTest {
         assertEquals(0, result.size());
     }
 
+    /**
+     * T4-3 异常路径：taskId 为 null
+     * 预期：抛出 IllegalArgumentException("taskId 不能为空")
+     */
+    @Test
+    void getRecordsByTaskId_nullTaskId_shouldThrowIllegalArgument() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.getRecordsByTaskId(null)
+        );
+        assertEquals("taskId 不能为空", ex.getMessage());
+    }
+
     // ==================== getTotalDuration ====================
 
     /**
@@ -271,6 +346,19 @@ class StudyTimeServiceImplTest {
         double result = studyTimeService.getTotalDuration(999L);
 
         assertEquals(0.0, result, 0.001);
+    }
+
+    /**
+     * T5-3 异常路径：taskId 为 null
+     * 预期：抛出 IllegalArgumentException("taskId 不能为空")
+     */
+    @Test
+    void getTotalDuration_nullTaskId_shouldThrowIllegalArgument() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.getTotalDuration(null)
+        );
+        assertEquals("taskId 不能为空", ex.getMessage());
     }
 
     // ==================== getDailySummary ====================
@@ -322,6 +410,19 @@ class StudyTimeServiceImplTest {
                 () -> studyTimeService.getDailySummary(1L, -1)
         );
         assertEquals("天数必须大于 0", ex.getMessage());
+    }
+
+    /**
+     * T6-4 异常路径：taskId 为 null
+     * 预期：抛出 IllegalArgumentException("taskId 不能为空")
+     */
+    @Test
+    void getDailySummary_nullTaskId_shouldThrowIllegalArgument() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> studyTimeService.getDailySummary(null, 7)
+        );
+        assertEquals("taskId 不能为空", ex.getMessage());
     }
 
     // ==================== 工具方法 ====================

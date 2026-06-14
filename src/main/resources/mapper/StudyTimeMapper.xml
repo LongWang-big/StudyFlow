@@ -21,7 +21,7 @@
     <update id="updateEndTime">
         UPDATE study_time_record
         SET end_time = #{endTime}, duration_minutes = #{durationMinutes}
-        WHERE id = #{id}
+        WHERE id = #{id} AND end_time IS NULL
     </update>
 
     <select id="selectById" resultMap="StudyTimeResultMap">
