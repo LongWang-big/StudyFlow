@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyflow.mapper.StudyTimeMapper">
+
+    <resultMap id="StudyTimeResultMap" type="com.studyflow.entity.StudyTimeRecord">
+        <id property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="durationMinutes" column="duration_minutes"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.studyflow.entity.StudyTimeRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO study_time_record (task_id, start_time)
+        VALUES (#{taskId}, #{startTime})
+    </insert>
+
+    <update id="updateEndTime">
+        UPDATE study_time_record
+        SET end_time = #{endTime}, duration_minutes = #{durationMinutes}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="StudyTimeResultMap">
+        SELECT * FROM study_time_record WHERE id = #{id}
+    </select>
+
+    <select id="selectByTaskId" resultMap="StudyTimeResultMap">
+        SELECT * FROM study_time_record
+        WHERE task_id = #{taskId}
+        ORDER BY start_time DESC
+    </select>
+
+    <select id="selectRecentByTaskId" resultMap="StudyTimeResultMap">
+        SELECT * FROM study_time_record
+        WHERE task_id = #{taskId}
+          AND start_time >= DATE_SUB(NOW(), INTERVAL #{days} DAY)
+        ORDER BY start_time DESC
+    </select>
+
+    <select id="sumDurationByTaskId" resultType="java.lang.Double">
+        SELECT COALESCE(SUM(duration_minutes), 0)
+        FROM study_time_record
+        WHERE task_id = #{taskId}
+          AND duration_minutes IS NOT NULL
+    </select>
+
+</mapper>

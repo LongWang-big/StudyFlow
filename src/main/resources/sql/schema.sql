@@ -14,3 +14,15 @@ CREATE TABLE IF NOT EXISTS task (
     update_time     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学习任务表';
+
+CREATE TABLE IF NOT EXISTS study_time_record (
+    id                BIGINT       NOT NULL AUTO_INCREMENT,
+    task_id           BIGINT       NOT NULL COMMENT '关联任务 id',
+    start_time        DATETIME     NOT NULL COMMENT '开始时间',
+    end_time          DATETIME              DEFAULT NULL COMMENT '结束时间（未结束时为 NULL）',
+    duration_minutes  DOUBLE                DEFAULT NULL COMMENT '学习时长（分钟，精确到小数点后 1 位）',
+    create_time       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间',
+    PRIMARY KEY (id),
+    KEY idx_task_id (task_id),
+    CONSTRAINT fk_study_time_task FOREIGN KEY (task_id) REFERENCES task (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学习时长记录表';
